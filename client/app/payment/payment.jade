@@ -8,31 +8,31 @@ header#banner.hero-unit
     .col-lg-12
       h1.page-header Payment:
       .row
-        div(ng-include='"components/messages.html"')
-      .form-group
-        label.col-sm-2.control-label(for='description') Description
-        .col-sm-10
-          input#description.form-control(type='text', ng-model="transaction.description", placeholder='Description')
-      .form-group
-        label.col-sm-2.control-label(for='amount') Amount
-        .col-sm-10
-          input#amount.form-control(type='text', ng-model="transaction.amount", placeholder='100', required)
-      .form-group
-        label.col-sm-2.control-label(for='amount') Credit Card
-        .col-sm-10
-          input#amount.form-control(type='text', ng-model="transaction.cardNum", placeholder='45051521216012')
-      .form-group
-        label.col-sm-2.control-label(for='amount') CVV
-        .col-sm-10
-          input#amount.form-control(type='text', ng-model="transaction.cvv", placeholder='257', required, min='1')
-      .form-group
-        label.col-sm-2.control-label(for='amount') Expiry Year
-        .col-sm-10
-          input#amount.form-control(type='text', ng-model="transaction.expYear", placeholder='2017', required)
-      .form-group
-        label.col-sm-2.control-label(for='amount') Expiry Month
-        .col-sm-10
-          input#amount.form-control(type='text', ng-model="transaction.expMonth", placeholder='07' required)
+      form(action='', method='POST', id='payment-form')
+        .form-group
+          label.col-sm-2.control-label(for='description') Description
+          .col-sm-10
+            input#description.form-control(type='text', ng-model="transaction.description")
+        .form-group
+          label.col-sm-2.control-label(for='amount') Amount
+          .col-sm-10
+            input#amount.form-control(type='text', ng-model="transaction.amount", placeholder='100')
+        .form-group
+          label.col-sm-2.control-label(for='amount') Credit Card
+          .col-sm-10
+            input#amount.form-control(type='text', ng-model="transaction.cardNum", placeholder='45051521216012', data-stripe="number")
+        .form-group
+          label.col-sm-2.control-label(for='amount') CVV
+          .col-sm-10
+            input#amount.form-control(type='text', ng-model="transaction.cvv", placeholder='257', data-stripe="cvc")
+        .form-group
+          label.col-sm-2.control-label(for='amount') Expiry Year
+          .col-sm-10
+            input#amount.form-control(type='text', ng-model="transaction.expYear", placeholder='2017', data-stripe="exp-year")
+        .form-group
+          label.col-sm-2.control-label(for='amount') Expiry Month
+          .col-sm-10
+            input#amount.form-control(type='text', ng-model="transaction.expMonth", placeholder='07', data-stripe="exp-month")
 
       .form-group
         .col-sm-10

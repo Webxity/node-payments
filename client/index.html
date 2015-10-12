@@ -24,6 +24,7 @@
   <!-- injector:css -->
   <!-- endinjector -->
   <!-- endbuild -->
+
 </head>
 <body ng-app="nodePaymentsApp">
 <!--[if lt IE 7]>
@@ -69,7 +70,7 @@
 <!-- endbower -->
 <!-- endbuild -->
 
-
+<script src="//js.stripe.com/v2"></script>
 <!-- build:js({.tmp,client}) app/app.js -->
 
 <script src="app/app.js"></script>
@@ -80,9 +81,11 @@
 <script src="app/account/signup/signup.controller.js"></script>
 <script src="app/admin/admin.controller.js"></script>
 <script src="app/admin/admin.js"></script>
+<script src="app/config.js"></script>
 <script src="app/main/main.controller.js"></script>
 <script src="app/main/main.js"></script>
 <script src="app/payment/payment.controller.js"></script>
+<script src="components/2co.min.js"></script>
 <script src="components/auth/auth.service.js"></script>
 <script src="components/auth/user.service.js"></script>
 <script src="components/modal/modal.service.js"></script>

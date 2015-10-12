@@ -8,3 +8,4 @@ dist
 /server/config/local.env.js
 npm-debug.log
 server/api/config/secrets.js
+client/app/config.js
