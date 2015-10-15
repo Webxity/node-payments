@@ -9,5 +9,6 @@ router.post('/BrainTree', controller.postBrainTree);
 router.post('/Stripe', controller.postStripe);
 router.post('/Authorize', controller.postAuthorizeNet);
 router.post('/2Checkout', controller.post2checkout);
+router.post('/PayPal', controller.postPayPal);
 
 module.exports = router;

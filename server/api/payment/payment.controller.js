@@ -5,6 +5,7 @@ var secrets = require('../config/secrets.js'),
   braintree = require('braintree'),
   express = require('express'),
   router = express.Router(),
+  casual = require('casual'),
   Twocheckout = require("2checkout-node"),
   authorizeNetClient = require('authorize-net')({
     API_LOGIN_ID: secrets.authorize.apiLoginId,
@@ -12,6 +13,35 @@ var secrets = require('../config/secrets.js'),
     testMode: secrets.authorize.sandbox
   }),
   _ = require("lodash");
+var gateway = require('42-cent-paypal/index.js').factory;
+var paypal = require('paypal-rest-sdk');
+var assert = require('assert');
+var mapKeys = require('42-cent-util').mapKeys;
+var P = require('bluebird');
+var assign = require('object-assign');
+var cardType = require('credit-card-type');
+var CreditCard = require('42-cent-model').CreditCard;
+var Prospect = require('42-cent-model').Prospect;
+var creditCardSchema = {
+  creditCardNumber: 'number',
+  expirationMonth: 'expire_month',
+  expirationYear: 'expire_year',
+  cvv2: 'cvv2',
+  billingFirstName: 'first_name',
+  billingLastName: 'last_name'
+};
+var GatewayError = require('42-cent-base').GatewayError;
+
+var billingAddressSchema = {
+  billingPhone: 'phone',
+  billingAddress1: 'line1',
+  billingAddress2: 'line2',
+  billingCity: 'city',
+  billingState: 'state',
+  billingPostalCode: 'postal_code',
+  billingCountry: 'country_code'
+};
+
 
 /**
  * Stripe Payment Gateway Integration
@@ -42,15 +72,14 @@ exports.postStripe = function (req, res, next) {
 
 /**
  * Braintree API Integration - Gets the amount, credit card info and process the payment
- * @param req Request
- * @param res Response
+ * @param req - Request containing data from Angular Controller
+ * @param res - Response get response of the action
  * @Author - Webxity
  * @returns {*}
  */
 exports.postBrainTree = function (req, res) {
 
   var data = req.body;
-
   //Connection to braintree API
   var gateway = braintree.connect({
     environment: secrets.braintree.sandbox ? braintree.Environment.Sandbox : braintree.Environment.Production,
@@ -81,8 +110,8 @@ exports.postBrainTree = function (req, res) {
 
 /**
  * Authorize.Net Integration
- * @param req
- * @param res
+ * @param req - Request containing data from Angular Controller
+ * @param res - Response get response of the action
  */
 exports.postAuthorizeNet = function (req, res) {
   var data = req.body;
@@ -105,8 +134,8 @@ exports.postAuthorizeNet = function (req, res) {
 
 /**
  * 2 Checkout Integration
- * @param req
- * @param res
+ * @param req - Request containing data from Angular Controller
+ * @param res - Response get response of the action
  */
 exports.post2checkout = function (req, res) {
   var data = req.body;
@@ -143,3 +172,61 @@ exports.post2checkout = function (req, res) {
     }
   });
 };
+
+/**
+ * Paypal Integration
+ * @param req
+ * @param res
+ */
+exports.postPayPal = function (req, res) {
+  var data = req.body.transactions;
+  var prospect = new Prospect()
+    .withBillingFirstName(casual.first_name)
+    .withBillingLastName(casual.last_name)
+    .withBillingEmailAddress(casual.email)
+    .withBillingPhone(casual.phone)
+    .withBillingAddress1(casual.address1)
+    .withBillingAddress2(casual.address2)
+    .withBillingCity(casual.city)
+    .withBillingState(casual.state)
+    .withBillingPostalCode('3212')
+    .withBillingCountry(casual.country_code)
+    .withShippingFirstName(casual.first_name)
+    .withShippingLastName(casual.last_name)
+    .withShippingAddress1(casual.address1)
+    .withShippingAddress2(casual.address2)
+    .withShippingCity(casual.city)
+    .withShippingState(casual.state)
+    .withShippingPostalCode('3212')
+    .withShippingCountry(casual.country_code);
+
+  var creditCards = {
+    cc: new CreditCard()
+      .withCreditCardNumber(data.cardNum)
+      .withExpirationMonth(data.expMonth)
+      .withExpirationYear(data.expYear)
+      .withCvv2(data.cvv)
+      .withCardHolder(casual.name)
+  };
+
+    var service;
+    var amount = {
+      amount: data.amount
+    };
+      service = gateway({CLIENT_ID: secrets.paypal.client_id, CLIENT_SECRET: secrets.paypal.client_secret, testMode: true});
+      service.submitTransaction(amount, creditCards.cc, prospect)
+        .then(function (transaction) {
+          console.log(transaction._original.id);
+          if(transaction._original.state){
+            res.sendStatus(200);
+          }
+        })
+        .catch(function (err) {
+          console.log(err);
+          res.sendStatus(500);
+        });
+};
+
+
+
+

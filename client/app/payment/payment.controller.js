@@ -42,10 +42,10 @@ angular.module('nodePaymentsApp')
       var args = {
         sellerId: APP_CONFIG.twocheckout.sellerId,
         publishableKey: APP_CONFIG.twocheckout.publishableKey,
-        ccNo: '4111111111111111',
-        cvv: '123',
-        expMonth: '12',
-        expYear: '2016'
+        ccNo: $scope.transaction.cardNum,
+        cvv: $scope.transaction.cvv,
+        expMonth: $scope.transaction.expMonth,
+        expYear: $scope.transaction.expYear
       };
 
       var successCallback = function (data) {
