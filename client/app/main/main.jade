@@ -1,0 +1,25 @@
+div(ng-include='"components/navbar/navbar.html"')
+
+header#banner.hero-unit
+  .container
+    h1 Node-Payments
+    p.lead Get all the payment gateways in a single place.
+
+.container
+  .row
+    .col-lg-12
+      h1.page-header Gateways:
+      select(class='btn btn-default' ng-model="data.gateway")
+        option 2Checkout
+        option Authorize
+        option BrainTree
+        option Paypal
+        option Stripe
+      br
+      br
+      button(class='btn btn-primary' ng-click='nextpage()') Next
+
+footer.footer
+  .container
+    p
+      | created by:Webxity.com
